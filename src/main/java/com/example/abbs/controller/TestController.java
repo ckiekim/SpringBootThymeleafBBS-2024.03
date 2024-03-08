@@ -11,4 +11,9 @@ public class TestController {
 		return "index";
 	}
 	
+	@GetMapping("/login")
+	public String login() {
+		return "user/login";
+	}
+	
 }
