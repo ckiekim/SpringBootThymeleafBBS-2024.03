@@ -18,6 +18,8 @@ import com.example.abbs.entity.User;
 import com.example.abbs.service.UserService;
 import com.example.abbs.util.ImageUtil;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 @RequestMapping("/user")
 public class UserController {
@@ -69,6 +71,38 @@ public class UserController {
 	@GetMapping("/login")
 	public String loginForm() {
 		return "user/login";
+	}
+	
+	@PostMapping("/login")
+	public String loginProc(String uid, String pwd, HttpSession session, Model model) {
+		int result = uSvc.login(uid, pwd);
+		switch(result) {
+		case UserService.CORRECT_LOGIN:
+			User user = uSvc.getUserByUid(uid);
+			session.setAttribute("sessUid", uid);
+			session.setAttribute("sessUname", user.getUname());
+			session.setAttribute("profile", user.getProfile());
+			session.setAttribute("email", user.getEmail());
+			session.setAttribute("github", user.getGithub());
+			session.setAttribute("insta", user.getInsta());
+			session.setAttribute("location", user.getLocation());
+			
+			// 환영 메세지
+			log.info("Info Login: {}, {}", uid, user.getUname());
+			model.addAttribute("msg", user.getUname()+"님 환영합니다.");
+			model.addAttribute("url", "/abbs/board/list");
+			break;
+			
+		case UserService.USER_NOT_EXIST:
+			model.addAttribute("msg", "ID가 없습니다. 회원가입 페이지로 이동합니다.");
+			model.addAttribute("url", "/abbs/user/register");
+			break;
+		
+		case UserService.WRONG_PASSWORD:
+			model.addAttribute("msg", "패스워드 입력이 잘못되었습니다. 다시 입력하세요.");
+			model.addAttribute("url", "/abbs/user/login");
+		}
+		return "common/alertMsg";
 	}
 	
 }
