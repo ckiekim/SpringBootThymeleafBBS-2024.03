@@ -10,10 +10,6 @@ public class TestController {
 	public String index() {
 		return "index";
 	}
-	
-	@GetMapping("/login")
-	public String login() {
-		return "user/login";
-	}
+
 	
 }
