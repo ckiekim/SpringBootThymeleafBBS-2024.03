@@ -44,7 +44,7 @@
 									<input class="form-control" type="text" id="query" placeholder="검색할 내용">
 								</span>
 								<span th:if="${query}">
-									<input class="form-control" type="text" id="query" value="${query}">
+									<input class="form-control" type="text" id="query" th:value="${query}">
 								</span>
 							</td>
 							<td style="width: 8%">
@@ -56,13 +56,14 @@
 					<table class="table">
 						<tr>
 							<th style="width: 8%">ID</th>
-							<th style="width: 52%">제목</th>
+							<th style="width: 42%">제목</th>
 							<th style="width: 14%">글쓴이</th>
 							<th style="width: 16%">수정시간</th>
 							<th style="width: 10%">조회수</th>
+							<th style="width: 10%">좋아요</th>
 						</tr>
 						<tr th:each="board: ${boardList}">
-							<td>${board.bid}</td>
+							<td>[[${board.bid}]]</td>
 							<td>
 								<a th:href="@{/board/detail/{x}/{y}(x=${board.bid},y=${board.uid})}">[[${board.title}]]</a>
 								<span th:if="${board.replyCount ge 1}">
@@ -72,6 +73,7 @@
 							<td>[[${board.uname}]]</td>
 							<td>[[${#temporals.format(board.modTime, 'yy-MM-dd HH:mm')}]]</td>
 							<td>[[${board.viewCount}]]</td>
+							<td>[[${board.likeCount}]]</td>
 						</tr>
 					</table>
 					<!-- pagination -->
