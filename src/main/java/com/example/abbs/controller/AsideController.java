@@ -31,8 +31,9 @@ public class AsideController {
 	public String weather(HttpSession session) {
 		String location = (String) session.getAttribute("location") + "청";
 		String roadAddr = asideUtil.getRoadAddr(location);
-		Map<String, Double> map = asideUtil.getGeocode(roadAddr);
-		return "lon=" + map.get("lon") + ", lat=" + map.get("lat");
+		Map<String, String> map = asideUtil.getGeocode(roadAddr);
+		String result = asideUtil.getWeather(map.get("lon"), map.get("lat"));
+		return result;
 	}
 	
 }

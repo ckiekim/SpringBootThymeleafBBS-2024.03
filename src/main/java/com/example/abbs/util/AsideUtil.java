@@ -65,8 +65,9 @@ public class AsideUtil {
 		return roadAddr;
 	}
 	
-	public Map<String, Double> getGeocode(String addr) {
-		Map<String, Double> map = new HashMap<String, Double>();
+	// Kakao Local API
+	public Map<String, String> getGeocode(String addr) {
+		Map<String, String> map = new HashMap<String, String>();
 		try {
 			String query = URLEncoder.encode(addr, "utf-8");
 			String apiUrl = "https://dapi.kakao.com/v2/local/search/address.json"
@@ -88,17 +89,46 @@ public class AsideUtil {
 			JSONObject object = (JSONObject) parser.parse(result);
 			JSONArray documents = (JSONArray) object.get("documents");
 			JSONObject item = (JSONObject) documents.get(0);
-			String lon_ = (String) item.get("x");
-			String lat_ = (String) item.get("y");
-			System.out.println(lon_ + ", " + lat_);
-			
-			map.put("lon", Double.parseDouble(lon_));
-			map.put("lat", Double.parseDouble(lat_));
+			String lon = (String) item.get("x");
+			String lat = (String) item.get("y");
+			map.put("lon", lon);
+			map.put("lat", lat);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return map;
 	}
 	
+	// Open Weather API
+	public String getWeather(String lon, String lat) {
+		String apiUrl = "https://api.openweathermap.org/data/2.5/weather"
+				+ "?lat=" + lat + "&lon=" + lon + "&appid=" + openWeatherApiKey
+				+ "&units=metric&lang=kr";
+		String weatherStr = null;
+		try {
+			URL url = new URL(apiUrl);
+			BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream(),"UTF-8"));
+			String line = null, result = "";
+			while ((line = br.readLine()) != null)
+				result += line;
+			br.close();
+			
+			JSONParser parser = new JSONParser();
+			JSONObject obj = (JSONObject) parser.parse(result);
+			JSONArray weather = (JSONArray) obj.get("weather");
+			JSONObject weatherItem = (JSONObject) weather.get(0);
+			String desc = (String) weatherItem.get("description");
+			String iconCode = (String) weatherItem.get("icon");
+			JSONObject main = (JSONObject) obj.get("main");
+			double temp = (Double) main.get("temp");
+			String tempStr = String.format("%.1f", temp);
+			String iconUrl = "http://api.openweathermap.org/img/w/" + iconCode + ".png";
+			weatherStr = "<img src=\"" + iconUrl + "\" height=\"28\">" + desc + ","
+					+ " 온도: " + tempStr + "&#8451";			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return weatherStr;
+	}
 	
 }
