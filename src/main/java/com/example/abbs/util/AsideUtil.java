@@ -3,8 +3,11 @@ package com.example.abbs.util;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -51,7 +54,7 @@ public class AsideUtil {
 			
 			// JSON 데이터에서 원하는 값 추출하기
 			JSONParser parser = new JSONParser();
-			JSONObject object = (JSONObject) parser.parse(result.toString());
+			JSONObject object = (JSONObject) parser.parse(result);
 			JSONObject results = (JSONObject) object.get("results");
 			JSONArray juso = (JSONArray) results.get("juso");
 			JSONObject jusoItem = (JSONObject) juso.get(0);
@@ -60,6 +63,41 @@ public class AsideUtil {
 			e.printStackTrace();
 		}
 		return roadAddr;
+	}
+	
+	public Map<String, Double> getGeocode(String addr) {
+		Map<String, Double> map = new HashMap<String, Double>();
+		try {
+			String query = URLEncoder.encode(addr, "utf-8");
+			String apiUrl = "https://dapi.kakao.com/v2/local/search/address.json"
+					+ "?query=" + query;
+			
+			URL url = new URL(apiUrl);
+			// Header setting
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestProperty("Authorization", "KakaoAK " + kakaoApiKey);
+			
+			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+			String line = null, result = "";
+			while ((line = br.readLine()) != null)
+				result += line;
+			br.close();
+			
+			// JSON 데이터에서 원하는 값 추출하기
+			JSONParser parser = new JSONParser();
+			JSONObject object = (JSONObject) parser.parse(result);
+			JSONArray documents = (JSONArray) object.get("documents");
+			JSONObject item = (JSONObject) documents.get(0);
+			String lon_ = (String) item.get("x");
+			String lat_ = (String) item.get("y");
+			System.out.println(lon_ + ", " + lat_);
+			
+			map.put("lon", Double.parseDouble(lon_));
+			map.put("lat", Double.parseDouble(lat_));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return map;
 	}
 	
 	
