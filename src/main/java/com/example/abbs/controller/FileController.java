@@ -28,6 +28,27 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 public class FileController {
 	@Value("${spring.servlet.multipart.location}") private String uploadDir;
 	
+	@GetMapping("/download/{dir}/{filename}")
+	public ResponseEntity<Resource> profile(@PathVariable String dir, @PathVariable String filename) {
+		Path path = Paths.get(uploadDir + dir + "/" + filename);
+		try {
+			String contentType = Files.probeContentType(path);
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentDisposition(
+					ContentDisposition.builder("attachment")
+					 				  .filename(filename, StandardCharsets.UTF_8)
+					 				  .build()
+					);
+			headers.add(HttpHeaders.CONTENT_TYPE, contentType);
+			Resource resource = new InputStreamResource(Files.newInputStream(path));
+			return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
 	@GetMapping("/profile/{filename}")
 	public ResponseEntity<Resource> profile(@PathVariable String filename) {
 		Path path = Paths.get(uploadDir + "profile/" + filename);
@@ -48,25 +69,25 @@ public class FileController {
 		return null;
 	}
 
-	@GetMapping("/download/{filename}")
-	public ResponseEntity<Resource> download(@PathVariable String filename) {
-		Path path = Paths.get(uploadDir + "image/" + filename);
-		try {
-			String contentType = Files.probeContentType(path);
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentDisposition(
-					ContentDisposition.builder("attachment")
-					 				  .filename(filename, StandardCharsets.UTF_8)
-					 				  .build()
-					);
-			headers.add(HttpHeaders.CONTENT_TYPE, contentType);
-			Resource resource = new InputStreamResource(Files.newInputStream(path));
-			return new ResponseEntity<>(resource, headers, HttpStatus.OK);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+//	@GetMapping("/download/{filename}")
+//	public ResponseEntity<Resource> download(@PathVariable String filename) {
+//		Path path = Paths.get(uploadDir + "image/" + filename);
+//		try {
+//			String contentType = Files.probeContentType(path);
+//			HttpHeaders headers = new HttpHeaders();
+//			headers.setContentDisposition(
+//					ContentDisposition.builder("attachment")
+//					 				  .filename(filename, StandardCharsets.UTF_8)
+//					 				  .build()
+//					);
+//			headers.add(HttpHeaders.CONTENT_TYPE, contentType);
+//			Resource resource = new InputStreamResource(Files.newInputStream(path));
+//			return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		return null;
+//	}
 	
 	@ResponseBody
 	@PostMapping("/imageUpload")
@@ -86,7 +107,7 @@ public class FileController {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			url = "/abbs/file/download/" + filename;
+			url = "/abbs/file/download/image/" + filename;
 		}
 		
 		String ajaxResponse = "<script>"
