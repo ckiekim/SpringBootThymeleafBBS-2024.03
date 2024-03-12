@@ -111,4 +111,10 @@ public class BoardController {
 		return "board/detail";
 	}
 	
+	@GetMapping("/delete/{bid}")
+	public String delete(@PathVariable int bid, HttpSession session) {
+		boardService.deleteBoard(bid);
+		return "redirect:/board/list?p=" + session.getAttribute("currentBoardPage");
+	}
+	
 }
