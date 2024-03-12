@@ -76,8 +76,20 @@
 						</div>
 						<hr>
 					</div>
-					<form class="form-inline" action="/reply/insert" method="post">
-
+					<form class="form-inline" action="/abbs/board/reply" method="post">
+						<input type="hidden" name="bid" th:value="${board.bid}">
+						<input type="hidden" name="uid" th:value="${board.uid}">
+						<div class="row d-flex mt-2" style="align-items: center;">
+							<div class="col-1">
+								<label class="col-form-label">댓글</label>
+							</div>
+							<div class="col-9">
+								<textarea name="comment" rows="2" class="form-control"></textarea>
+							</div>
+							<div class="col-2">
+								<button type="submit" class="btn btn-primary ms-3">등록</button>
+							</div>
+						</div>
 					</form>
 				</main>
 			</div>
