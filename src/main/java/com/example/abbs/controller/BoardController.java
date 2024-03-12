@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.example.abbs.entity.Board;
 import com.example.abbs.entity.Reply;
 import com.example.abbs.service.BoardService;
+import com.example.abbs.service.ReplyService;
 import com.example.abbs.util.JsonUtil;
 
 import jakarta.servlet.http.HttpSession;
@@ -27,6 +28,7 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/board")
 public class BoardController {
 	@Autowired private BoardService boardService;
+	@Autowired private ReplyService replyService;
 	@Autowired private JsonUtil jsonUtil;
 	@Value("${spring.servlet.multipart.location}") private String uploadDir;
 
@@ -106,7 +108,7 @@ public class BoardController {
 		}
 		model.addAttribute("board", board);
 		
-		List<Reply> replyList = null;
+		List<Reply> replyList = replyService.getReplyList(bid);
 		model.addAttribute("replyList", replyList);
 		return "board/detail";
 	}

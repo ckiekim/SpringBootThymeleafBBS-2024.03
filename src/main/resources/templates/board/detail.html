@@ -36,7 +36,7 @@
 						</span>
 					</h3>
 					<hr>
-					<div class="row">
+					<div class="row mb-3">
 						<div class="col-8">
 							<h5>[[${board.title}]]</h5>
 							<h6>글번호: [[${board.bid}]] &nbsp;&nbsp; 
@@ -53,8 +53,32 @@
 							<h6><i class="fa-regular fa-thumbs-up"></i> [[${board.likeCount}]]</h6>
 						</div>
 						<hr>
-						<div class="col-12" th:utext="${board.content}"></div>							
+						<div class="col-12" th:utext="${board.content}"></div>
+						<br><br><hr>							
 					</div>
+
+					<div th:each="reply: ${replyList}">
+						<div class="row" th:if="${reply.isMine == 0}">
+							<div class="col-9">
+								<span class="me-2">[[${reply.uname}]]</span>
+								<span th:text="${#temporals.format(reply.regTime, 'yyyy-MM-dd HH:mm:ss')}"></span><br>
+								<span>[(${reply.comment})]</span>
+							</div>
+							<div class="col-3"></div>
+						</div>
+						<div class="row" th:if="${reply.isMine == 1}">
+							<div class="col-3"></div>
+							<div class="col-9 text-end">
+								<span class="me-2">[[${reply.uname}]]</span>
+								<span th:text="${#temporals.format(reply.regTime, 'yyyy-MM-dd HH:mm:ss')}"></span><br>
+								<span>[(${reply.comment})]</span>
+							</div>
+						</div>
+						<hr>
+					</div>
+					<form class="form-inline" action="/reply/insert" method="post">
+
+					</form>
 				</main>
 			</div>
 		</div>
