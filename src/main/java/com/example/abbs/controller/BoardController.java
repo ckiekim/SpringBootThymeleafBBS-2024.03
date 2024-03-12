@@ -95,9 +95,9 @@ public class BoardController {
 	@GetMapping("/detail/{bid}/{uid}")
 	public String detail(@PathVariable int bid, @PathVariable String uid, String option,
 			HttpSession session, Model model) {
-		// 본인이 조회한 경우 조회수 증가시키지 않음
+		// 본인이 조회한 경우 또는 댓글 작성후에는 조회수 증가시키지 않음
 		String sessUid = (String) session.getAttribute("sessUid");
-		if (!uid.equals(sessUid))
+		if (!uid.equals(sessUid) && (option==null || option.equals("")))
 			boardService.increaseViewCount(bid);
 		
 		Board board = boardService.getBoard(bid);
@@ -117,6 +117,18 @@ public class BoardController {
 	public String delete(@PathVariable int bid, HttpSession session) {
 		boardService.deleteBoard(bid);
 		return "redirect:/board/list?p=" + session.getAttribute("currentBoardPage");
+	}
+	
+	@PostMapping("/reply")
+	public String reply(int bid, String uid, String comment, HttpSession session) {
+		String sessUid = (String) session.getAttribute("sessUid");
+		int isMine = (sessUid.equals(uid)) ? 1 : 0;
+		Reply reply = new Reply(comment, sessUid, bid, isMine);
+		
+		replyService.insertReply(reply);
+		boardService.increaseReplyCount(bid);
+		
+		return "redirect:/board/detail/" + bid + "/" + uid + "?option=DNI";
 	}
 	
 }
