@@ -144,7 +144,7 @@ public class BoardController {
 		return "redirect:/board/detail/" + bid + "/" + uid + "?option=DNI";
 	}
 	
-	// AJAX 처리
+	// AJAX 처리 - 타임리프에서 세팅하는 값을 변경하기 위한 방법
 	@GetMapping("/like/{bid}")
 	public String like(@PathVariable int bid, HttpSession session, Model model) {
 		String sessUid = (String) session.getAttribute("sessUid");
