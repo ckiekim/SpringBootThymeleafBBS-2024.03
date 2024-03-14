@@ -117,6 +117,6 @@ public class ScheduleController {
 		model.addAttribute("height", 600 / calendar.size());
 		return "schedule/calendar";
 	}
-	
+
 	
 }
