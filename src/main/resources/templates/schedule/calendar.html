@@ -66,7 +66,14 @@
 											</div>
 										</div>
 									</div>
-									[[${day.sdate}]]
+									<div th:each="sched: ${day.schedList}">
+										<span class="" th:class="${schedStat.first ? 'mt-1' : ''}" th:onclick="schedClick([[${sched.sid}]])">
+											<small>
+												<span th:text="${sched.startTime}"></span>
+												<span th:class="${sched.isImportant == 1 ? 'fw-bold' : ''}" th:text="${sched.title}"></span>
+											</small>
+										</span>
+									</div>
 								</td>
 							</div>
 						</tr>

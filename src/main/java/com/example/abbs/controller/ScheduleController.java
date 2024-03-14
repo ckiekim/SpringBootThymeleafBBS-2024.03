@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/schedule")
 public class ScheduleController {
 	@Autowired private ScheduleService schedSvc;
+	private String menu = "schedule";
 
 	@GetMapping({"/calendar/{arrow}", "/calendar"})
 	public String calendar(@PathVariable(required=false) String arrow, HttpSession session, Model model) {
@@ -115,6 +116,7 @@ public class ScheduleController {
 		model.addAttribute("month", String.format("%02d", month));
 		model.addAttribute("height", 600 / calendar.size());
 		model.addAttribute("todaySdate", String.format("%d%02d%02d", today.getYear(), today.getMonthValue(), today.getDayOfMonth()));
+		model.addAttribute("menu", menu);
 		return "schedule/calendar";
 	}
 
